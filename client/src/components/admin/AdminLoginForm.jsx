@@ -17,7 +17,9 @@ const AdminLoginForm = () => {
     try {
       const res = await login(adminData.email, adminData.password);
       if (res) {
-        navigate('/');
+        toast.success(res?.data?.message || 'you are admin', {
+          position: 'top-center',
+        });
       }
     } catch (error) {
       console.log(error.response);
