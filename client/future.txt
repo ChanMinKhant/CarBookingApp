@@ -1,0 +1,9 @@
+activity log
+customer search with any data eg with name or ph no..
+view deleted bookings
+view approved bookings
+view pending bookings
+
+$ git clone --depth 1 https://github.com/evalEmpire/perl5i.git
+$ cloc perl5i
+$ rm -rf perl5i
