@@ -11,6 +11,7 @@ const morgan = require('morgan');
 // Database
 dbConnect();
 
+console.log(process.env.CLIENT_URL);
 // Middleware
 app.use(
   cors({
