@@ -5,6 +5,7 @@ import {
   approveBooking,
   deleteBooking,
 } from '../../service/bookingService';
+import { toast, ToastContainer } from 'react-toastify';
 
 const BookingForm = ({
   addDataToBook,
@@ -27,10 +28,8 @@ const BookingForm = ({
         book.seatNumber
       );
       if (res.data.length === 0) {
-        console.log('Booking not found');
       }
       setBook(res.data[0]);
-      console.log('dfsdfsdfsdfsdfsdfsdfsdddddddddddd');
       setClicked(false);
     } catch (err) {
       console.log(err.response?.data?.message);
@@ -52,7 +51,7 @@ const BookingForm = ({
   const handleApproveBooking = async () => {
     try {
       const res = await approveBooking(book?._id);
-      console.log(res);
+      toast.success('Booking Approved');
     } catch (err) {
       console.log(err.response?.data?.message);
     }

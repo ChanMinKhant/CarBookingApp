@@ -7,7 +7,6 @@ const CarSeatIcon = ({
   handleSeat,
   Number,
 }) => {
-  console.log('CarSeatIcon rendered');
   // console.log(`${Number} isAvailable: ${isAvailable}`);
   // console.log(`${Number} isPending: ${isPending}`);
   // console.log(`${Number} isApproved: ${isApproved}`);

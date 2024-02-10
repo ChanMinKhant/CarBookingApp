@@ -120,9 +120,7 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   }
 
   const token = Math.random().toString(36).substring(7);
-  console.log('Token:', token);
   const hashedToken = await bcrypt.hash(token, 10);
-  console.log('HashedToken:', hashedToken);
 
   const data = {
     userName,
@@ -141,7 +139,6 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   //sentEmail to admin to approve
   const approveToken = `${process.env.CLIENT_URL}/admin/approve/${booking._id}/${token}`;
   const deleteToken = `${process.env.CLIENT_URL}/admin/delete/${booking._id}/${token}`;
-  console.log(approveToken, deleteToken);
   const emailTemplate = EmailTemplate(booking, deleteToken, approveToken);
 
   sendEmail({
@@ -194,10 +191,8 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
   } else {
     return next(new CustomError('Please provide a valid from', 400));
   }
-  console.log(query);
   const existingBooking = await Booking.find(query);
   if (existingBooking.length === 0) {
-    console.log('here');
     // i make this for the frontend to check if the seat is available or not
     return next(new CustomError('Booking not found', 404));
   }
@@ -227,7 +222,6 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
 // "http://api-url/:id"
 exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
-  console.log(id);
   // search booking by id and update isArchived field to true
   const book = await Booking.findById(id);
   if (!book || book.isArchived) {

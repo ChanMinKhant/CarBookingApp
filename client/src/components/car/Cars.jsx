@@ -8,7 +8,6 @@ import CarInterface from './CarInterface';
 // i need to use memo not to execute the function again and again
 // when i change only date or time or direction only want to render the necessary part
 const Cars = () => {
-  console.log('Cars rendered');
   const [choseDate, setChoseDate] = React.useState('');
   const [chosenTime, setChosenTime] = React.useState('');
   const [chosenDirection, setChosenDirection] = React.useState('');

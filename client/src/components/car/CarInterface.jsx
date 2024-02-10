@@ -22,7 +22,6 @@ const CarInterface = ({
   data: { chosenDirection, choseDate, chosenTime },
   isAdmin,
 }) => {
-  console.log('CarInterface rendered');
   const [availableSeats, setAvailableSeats] = useState([1, 2, 3, 4]);
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4]
   const [approvedSeats, setApprovedSeats] = useState([]);

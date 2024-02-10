@@ -14,7 +14,6 @@ const AdminLoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(adminData);
     try {
       const res = await login(adminData.email, adminData.password);
       if (res) {
