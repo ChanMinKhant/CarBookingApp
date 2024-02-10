@@ -36,7 +36,7 @@ const AppRouter = () => {
     },
     {
       id: 6,
-      path: '/admin/delete:id/:token',
+      path: '/admin/delete/:id/:token',
       component: <DeleteByEmail />,
     },
   ];

@@ -35,7 +35,6 @@ const CarInterface = ({
     carTime: '',
     bookingDate: '',
   });
-  console.log('book', book);
 
   useEffect(() => {
     const tempFunc = async () => {

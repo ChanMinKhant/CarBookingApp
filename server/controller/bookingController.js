@@ -139,7 +139,13 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   //sentEmail to admin to approve
   const approveToken = `${process.env.CLIENT_URL}/admin/approve/${booking._id}/${token}`;
   const deleteToken = `${process.env.CLIENT_URL}/admin/delete/${booking._id}/${token}`;
-  const emailTemplate = EmailTemplate(booking, deleteToken, approveToken);
+  const cancelToken = `${process.env.CLIENT_URL}/admin/cancel/${booking._id}/${token}`;
+  const emailTemplate = EmailTemplate(
+    booking,
+    deleteToken,
+    cancelToken,
+    approveToken
+  );
 
   sendEmail({
     email: 'cmktempmail2264@gmail.com',

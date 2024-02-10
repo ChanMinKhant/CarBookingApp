@@ -33,7 +33,7 @@ exports.sendEmail = async (option) => {
   await transporter.sendMail(mailOptions);
 };
 
-exports.EmailTemplate = (book, deleteToken, approveToken) => {
+exports.EmailTemplate = (book, deleteToken, cancelToken, approveToken) => {
   return `
   <style>
     h1 {
@@ -79,6 +79,8 @@ exports.EmailTemplate = (book, deleteToken, approveToken) => {
   <a href="${approveToken}">Approve Booking</a>
   <p>If you wish to delete this booking, please click the following link:</p>
   <a href="${deleteToken}">Delete Booking</a>
+  <p>If you wish to cancel this booking, please click the following link:</p>
+  <a href="${cancelToken}">Cancel Booking</a>
   <p>Thank you!</p>
 `;
 };
