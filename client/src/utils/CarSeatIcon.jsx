@@ -5,17 +5,19 @@ const CarSeatIcon = ({
   isPending,
   isApproved,
   handleSeat,
+  isAdmin,
   Number,
 }) => {
   // console.log(`${Number} isAvailable: ${isAvailable}`);
   // console.log(`${Number} isPending: ${isPending}`);
   // console.log(`${Number} isApproved: ${isApproved}`);
-
+  console.log(isAvailable, isAdmin);
   return (
     <button
       onClick={() => {
         handleSeat(Number);
       }}
+      disabled={!isAvailable && !isAdmin}
     >
       <p>{Number}</p>
 

@@ -114,6 +114,7 @@ const CarInterface = ({
           isAvailable={isSeatBooked(1)}
           isPending={isSeatPending(1)}
           handleSeat={handleSeat}
+          isAdmin={isAdmin}
           Number={1}
         />
         <div className='flex justify-center items-center'>
@@ -122,6 +123,7 @@ const CarInterface = ({
             isAvailable={isSeatBooked(2)}
             isPending={isSeatPending(2)}
             handleSeat={handleSeat}
+            isAdmin={isAdmin}
             Number={2}
           />
           <CarSeatIcon
@@ -129,6 +131,7 @@ const CarInterface = ({
             isAvailable={isSeatBooked(3)}
             isPending={isSeatPending(3)}
             handleSeat={handleSeat}
+            isAdmin={isAdmin}
             Number={3}
           />
           <CarSeatIcon
@@ -136,6 +139,7 @@ const CarInterface = ({
             isAvailable={isSeatBooked(4)}
             isPending={isSeatPending(4)}
             handleSeat={handleSeat}
+            isAdmin={isAdmin}
             Number={4}
           />
         </div>
