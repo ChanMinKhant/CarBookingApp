@@ -77,6 +77,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV.trim() === 'production' ? true : false,
+    sameSite: 'none',
   });
   res.status(200).json({
     success: true,
