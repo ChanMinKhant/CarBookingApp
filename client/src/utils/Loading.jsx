@@ -3,9 +3,11 @@ import './Loading.css';
 
 const Loading = () => {
   return (
-    <div class='lds-ripple'>
-      <div></div>
-      <div></div>
+    <div className='container'>
+      <div className='lds-ripple'>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   );
 };
