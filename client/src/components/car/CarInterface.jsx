@@ -22,7 +22,7 @@ const CarInterface = ({
   data: { chosenDirection, choseDate, chosenTime },
   isAdmin,
 }) => {
-  const [availableSeats, setAvailableSeats] = useState([]);
+  const [availableSeats, setAvailableSeats] = useState([1,2,3,4]);
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4]
   const [approvedSeats, setApprovedSeats] = useState([]);
   const [open, setOpen] = useState(false);
