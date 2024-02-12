@@ -6,6 +6,7 @@ import AdminApproveForm from './../admin/AdminApproveForm';
 import CancelByEmail from '../email/CancelByEmail';
 import ApproveByEmail from '../email/ApproveByEmail';
 import DeleteByEmail from '../email/DeleteByEmail';
+import Loading from '../../utils/Loading';
 
 const AppRouter = () => {
   const routes = [
@@ -22,7 +23,7 @@ const AppRouter = () => {
     {
       id: 3,
       path: '/admin',
-      component: <AdminApproveForm />,
+      component: <Loading />,
     },
     {
       id: 4,
