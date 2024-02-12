@@ -22,7 +22,7 @@ const CarInterface = ({
   data: { chosenDirection, choseDate, chosenTime },
   isAdmin,
 }) => {
-  const [availableSeats, setAvailableSeats] = useState([1, 2, 3, 4]);
+  const [availableSeats, setAvailableSeats] = useState([]);
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4]
   const [approvedSeats, setApprovedSeats] = useState([]);
   const [open, setOpen] = useState(false);
@@ -41,6 +41,7 @@ const CarInterface = ({
       if (choseDate) {
         const { pendingSeats, availableSeats, approvedSeats } =
           await checkSeatAvailability(choseDate, chosenTime, chosenDirection);
+        console.log(availableSeats);
         setApprovedSeats(approvedSeats);
         setAvailableSeats(availableSeats);
         setPendingSeats(pendingSeats);

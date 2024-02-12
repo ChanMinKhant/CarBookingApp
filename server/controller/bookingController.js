@@ -26,17 +26,17 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
 
   const Bookings = await Booking.find({ ...query, isArchived: false });
 
+  const availableSeats = [1, 2, 3, 4].filter((seat) => {
+    return Bookings.every(
+      (booking) => booking.seatNumber !== seat && !booking.isApproved
+    );
+  });
   const pendingSeats = Bookings.filter((booking) => !booking.isApproved).map(
     (booking) => booking.seatNumber
   );
   const approvedSeats = Bookings.filter((booking) => booking.isApproved).map(
     (booking) => booking.seatNumber
   );
-  const availableSeats = [1, 2, 3, 4].filter((seat) => {
-    return !Bookings.some(
-      (booking) => booking.seatNumber === seat && booking.isApproved
-    );
-  });
 
   res.status(200).json({
     success: true,
