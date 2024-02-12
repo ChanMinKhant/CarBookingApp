@@ -2,28 +2,14 @@ const mongoose = require('mongoose');
 
 const activityLogSchema = new mongoose.Schema(
   {
-    seatNumber: {
-      type: Number,
-      enum: [1, 2, 3, 4],
-      required: [true, 'Seat number is required.'],
-    },
-    travelDirection: {
-      type: String,
-      enum: ['Yangon → Pyay', 'Pyay → Yangon'],
-      required: true,
-    },
-    carTime: {
-      type: String,
-      enum: ['6:00', '6:05', '6:10', '6:15'],
-      required: true,
-    },
-    bookingDate: {
-      type: String,
+    booking_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Booking',
       required: true,
     },
     status: {
       type: String,
-      enum: ['booked', 'cancelled', 'deleted'],
+      enum: ['approved', 'cancelled', 'deleted', 'pending'],
       required: true,
     },
   },

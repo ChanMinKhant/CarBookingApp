@@ -3,6 +3,8 @@ const Booking = require('./../model/bookingModel');
 const bcrypt = require('bcryptjs');
 const CustomError = require('./../util/CustomError');
 const { sendEmail, EmailTemplate } = require('./../util/index');
+const ApiFeatures = require('./../util/ApiFeatures');
+const ActivityLog = require('./../model/activityLogModel');
 // const ApiFeatures = require('./../util/ApiFeatures');
 
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00?from=yangon" or "from=pyay"
@@ -26,11 +28,12 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
 
   const Bookings = await Booking.find({ ...query, isArchived: false });
 
-  const availableSeats = [1, 2, 3, 4].filter((seat) => {
-    return Bookings.every(
-      (booking) => booking.seatNumber !== seat && !booking.isApproved
-    );
-  });
+  const availableSeats = [1, 2, 3, 4].filter(
+    (seat) => !Bookings.map((booking) => booking.seatNumber).includes(seat)
+  );
+
+  // availableSeats is not include from the booking
+
   const pendingSeats = Bookings.filter((booking) => !booking.isApproved).map(
     (booking) => booking.seatNumber
   );
@@ -137,6 +140,10 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   };
   //save to database
   const booking = await Booking.create(data);
+  await ActivityLog.create({
+    booking_id: booking._id,
+    status: 'pending',
+  });
   //sentEmail to admin to approve
   const approveToken = `${process.env.CLIENT_URL}/admin/approve/${booking._id}/${token}`;
   const deleteToken = `${process.env.CLIENT_URL}/admin/delete/${booking._id}/${token}`;
@@ -218,6 +225,10 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
     { isApproved: true },
     { new: true }
   );
+  await ActivityLog.create({
+    booking_id: id,
+    status: 'approved',
+  });
   if (!updatedBooking) {
     throw new CustomError('Booking not found', 404);
   }
@@ -236,6 +247,10 @@ exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
   }
   book.isApproved = false;
   await book.save();
+  await ActivityLog.create({
+    booking_id: id,
+    status: 'cancelled',
+  });
 
   return res.status(200).json({ success: true, message: 'Booking cancelled' });
 });
@@ -247,6 +262,10 @@ exports.deleteBooking = asyncErrorHandler(async (req, res, next) => {
     { isArchived: true },
     { new: true }
   );
+  await ActivityLog.create({
+    booking_id: id,
+    status: 'deleted',
+  });
   return res
     .status(200)
     .json({ success: true, message: 'Booking deleted', deletedBooking });
@@ -261,4 +280,27 @@ exports.getPendingsBooking = asyncErrorHandler(async (req, res, next) => {
     .sort()
     .filter().query;
   return res.status(200).json({ success: true, pendings });
+});
+
+// approved bookings and deleted bookings
+exports.getApprovedBooking = asyncErrorHandler(async (req, res, next) => {
+  const approved = await new ApiFeatures(
+    Booking.find({ isApproved: true, isArchived: false }).select('-tokenHash'),
+    req.query
+  )
+    .paginate()
+    .sort()
+    .filter().query;
+  return res.status(200).json({ success: true, approved });
+});
+
+exports.getDeletedBooking = asyncErrorHandler(async (req, res, next) => {
+  const deleted = await new ApiFeatures(
+    Booking.find({ isArchived: true }).select('-tokenHash'),
+    req.query
+  )
+    .paginate()
+    .sort()
+    .filter().query;
+  return res.status(200).json({ success: true, deleted });
 });

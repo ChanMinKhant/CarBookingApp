@@ -5,6 +5,7 @@ const Token = require('./../model/tokenModel');
 const Booking = require('./../model/bookingModel');
 const comparePassword = require('./../util');
 const jwt = require('jsonwebtoken');
+const ActivityLog = require('./../model/activityLogModel');
 
 // create admin account
 // "http://api-url/createAdmin"
@@ -77,7 +78,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV.trim() === 'production' ? true : false,
-    sameSite: 'none',
+    sameSite: 'lax',
   });
   res.status(200).json({
     success: true,
@@ -117,8 +118,13 @@ exports.approveByEmail = asyncErrorHandler(async (req, res, next) => {
     const err = new CustomError('Invalid token', 400);
     return next(err);
   }
+
   booking.isApproved = true;
   await booking.save();
+  await ActivityLog.create({
+    booking_id: id,
+    status: 'approved',
+  });
   res.status(200).json({
     success: true,
     message: 'Booking approved',
@@ -139,6 +145,10 @@ exports.cancelByEmail = asyncErrorHandler(async (req, res, next) => {
   }
   booking.isApproved = false;
   await booking.save();
+  await ActivityLog.create({
+    booking_id: id,
+    status: 'cancelled',
+  });
   res.status(200).json({
     success: true,
     message: 'Booking cancelled',
@@ -158,6 +168,11 @@ exports.deleteByEmail = asyncErrorHandler(async (req, res, next) => {
     return next(err);
   }
   await booking.delete();
+  await ActivityLog.create({
+    booking_id: id,
+    status: 'deleted',
+  });
+
   res.status(200).json({
     success: true,
     message: 'Booking deleted',
