@@ -4,6 +4,10 @@ view deleted bookings
 view approved bookings
 view pending bookings
 
+live bookings( when another one booked a seat. its automatically reload in all browser ) use socket.io
+loading
+logout, logout all devices, change passwords if need, 
+
 $ git clone --depth 1 https://github.com/evalEmpire/perl5i.git
 $ cloc perl5i
 $ rm -rf perl5i
