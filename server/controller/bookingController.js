@@ -5,7 +5,6 @@ const CustomError = require('./../util/CustomError');
 const { sendEmail, EmailTemplate } = require('./../util/index');
 const ApiFeatures = require('./../util/ApiFeatures');
 const ActivityLog = require('./../model/activityLogModel');
-// const ApiFeatures = require('./../util/ApiFeatures');
 
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00?from=yangon" or "from=pyay"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
