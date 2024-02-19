@@ -87,3 +87,21 @@ export const getBookingDataForForm = async (date, time, from, seatNumber) => {
     throw error;
   }
 };
+
+export const addCarTime = async (data) => {
+  try {
+    const response = await apiService.post('/addCarTime', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const removeCarTime = async (data) => {
+  try {
+    const response = await apiService.post('/removeCarTime', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

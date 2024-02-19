@@ -5,6 +5,7 @@ const CustomError = require('./../util/CustomError');
 const { sendEmail, EmailTemplate } = require('./../util/index');
 const ApiFeatures = require('./../util/ApiFeatures');
 const ActivityLog = require('./../model/activityLogModel');
+const AddCarTime = require('./../model/addCarTimeModel');
 
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00?from=yangon" or "from=pyay"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
@@ -302,4 +303,104 @@ exports.getDeletedBooking = asyncErrorHandler(async (req, res, next) => {
     .sort()
     .filter().query;
   return res.status(200).json({ success: true, deleted });
+});
+
+// exports.addCarTime = asyncErrorHandler(async (req, res, next) => {
+//   const { bookingDate, travelDirection } = req.body;
+//   console.log(bookingDate, travelDirection);
+//   if (!bookingDate || !travelDirection) {
+//     throw new CustomError(
+//       'Please provide bookingDate, travelDirection, and carTime',
+//       400
+//     );
+//   }
+
+//   let document = await AddCarTime.findOneAndUpdate(
+//     { bookingDate, travelDirection },
+//     { $inc: { count: 1 } },
+//     { upsert: true, new: true, setDefaultsOnInsert: true }
+//   );
+
+//   res.status(200).json({ success: true, data: document });
+// });
+
+exports.addCarTime = asyncErrorHandler(async (req, res, next) => {
+  const { bookingDate, travelDirection } = req.body;
+  if (!bookingDate || !travelDirection) {
+    return next(
+      new CustomError(
+        'Please provide bookingDate, travelDirection, and carTime',
+        400
+      )
+    );
+  }
+  const document = await AddCarTime.findOne({ bookingDate, travelDirection });
+  if (document) {
+    document.count += 1;
+    await document.save();
+    return res
+      .status(200)
+      .json({ success: true, message: 'Car time added', data: document });
+  }
+  const newDocument = await AddCarTime.create({
+    bookingDate,
+    travelDirection,
+    count: 4,
+  });
+  if (!newDocument) {
+    throw new CustomError('Failed to add new time', 500);
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: 'Car time added', data: newDocument });
+});
+
+exports.removeCarTime = asyncErrorHandler(async (req, res, next) => {
+  const { bookingDate, travelDirection } = req.body;
+  if (!bookingDate || !travelDirection) {
+    return next(
+      new CustomError(
+        'Please provide bookingDate, travelDirection, and carTime',
+        400
+      )
+    );
+  }
+  // Find or create the document
+  const document = await AddCarTime.findOne({ bookingDate, travelDirection });
+  if (!document) {
+    throw new CustomError('Document not found', 404);
+  }
+
+  if (document.count < 2) {
+    throw new CustomError("You can't remove car time.", 400);
+  }
+  document.count -= 1;
+  await document.save();
+
+  return res
+    .status(200)
+    .json({ success: true, message: 'Car time removed', data: document });
+});
+
+exports.getCount = asyncErrorHandler(async (req, res, next) => {
+  const { bookingDate, travelDirection } = req.body;
+  if (!bookingDate || !travelDirection) {
+    return next(
+      new CustomError(
+        'Please provide bookingDate, travelDirection, and carTime',
+        400
+      )
+    );
+  }
+  const document = await AddCarTime.findOne({ bookingDate, travelDirection });
+  if (!document) {
+    return res.status(200).json({
+      success: true,
+      data: { count: 3 },
+    });
+  }
+  return res.status(200).json({
+    success: true,
+    data: document,
+  });
 });

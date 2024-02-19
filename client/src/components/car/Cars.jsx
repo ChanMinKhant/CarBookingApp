@@ -35,7 +35,7 @@ const Cars = () => {
       {/* Car img */}
       <div className='flex flex-col items-start justify-center'>
         <DateDropdown setChoseDate={setChoseDate} />
-        <TimeDropdown setChosenTime={setChosenTime} />
+        <TimeDropdown setChosenTime={setChosenTime} carDate={choseDate} />
         <TravelDirectionDropdown setChosenDirection={setChosenDirection} />
       </div>
       <CarInterface data={data} isAdmin={isAdmin} />

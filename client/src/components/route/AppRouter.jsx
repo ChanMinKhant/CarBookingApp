@@ -7,6 +7,7 @@ import CancelByEmail from '../email/CancelByEmail';
 import ApproveByEmail from '../email/ApproveByEmail';
 import DeleteByEmail from '../email/DeleteByEmail';
 import Loading from '../../utils/Loading';
+import ControlCarTime from '../controlCarTime/ControlCarTime';
 
 const AppRouter = () => {
   const routes = [
@@ -39,6 +40,11 @@ const AppRouter = () => {
       id: 6,
       path: '/admin/delete/:id/:token',
       component: <DeleteByEmail />,
+    },
+    {
+      id: 7,
+      path: '/admin/control-car-time',
+      component: <ControlCarTime />,
     },
   ];
 
