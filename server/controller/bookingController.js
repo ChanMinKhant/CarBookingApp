@@ -384,23 +384,22 @@ exports.removeCarTime = asyncErrorHandler(async (req, res, next) => {
 
 exports.getCount = asyncErrorHandler(async (req, res, next) => {
   const { bookingDate, travelDirection } = req.body;
+
+  console.log(bookingDate, travelDirection);
   if (!bookingDate || !travelDirection) {
     return next(
-      new CustomError(
-        'Please provide bookingDate, travelDirection, and carTime',
-        400
-      )
+      new CustomError('Please provide bookingDate and travelDirection', 400)
     );
   }
   const document = await AddCarTime.findOne({ bookingDate, travelDirection });
   if (!document) {
     return res.status(200).json({
       success: true,
-      data: { count: 3 },
+      count: 3,
     });
   }
   return res.status(200).json({
     success: true,
-    data: document,
+    count: document.count,
   });
 });

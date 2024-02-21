@@ -13,6 +13,6 @@ router.route('/cancel/:id').put(verifyJWT, bookingController.cancelBooking);
 router.route('/delete/:id').put(verifyJWT, bookingController.deleteBooking);
 router.route('/addCarTime').post(verifyJWT, bookingController.addCarTime);
 router.route('/removeCarTime').post(verifyJWT, bookingController.removeCarTime);
-router.route('/getCount').get(bookingController.getCount);
+router.route('/getCount').post(bookingController.getCount);
 
 module.exports = router;

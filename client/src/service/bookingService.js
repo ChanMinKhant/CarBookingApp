@@ -105,3 +105,15 @@ export const removeCarTime = async (data) => {
     throw error;
   }
 };
+
+export const getCount = async (bookingDate, travelDirection) => {
+  try {
+    const response = await apiService.post('/getCount', {
+      bookingDate,
+      travelDirection,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
