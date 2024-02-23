@@ -8,6 +8,8 @@ import ApproveByEmail from '../email/ApproveByEmail';
 import DeleteByEmail from '../email/DeleteByEmail';
 import Loading from '../../utils/Loading';
 import ControlCarTime from '../controlCarTime/ControlCarTime';
+import Dashboard from '../dashboard/Dashboard';
+import Activity from '../dashboard/Activity/Activity';
 
 const AppRouter = () => {
   const routes = [
@@ -62,6 +64,9 @@ const AppRouter = () => {
             component: item.component,
           })
         )}
+        <Route path='/dashboard/*' element={<Dashboard />}>
+          <Route path='activity' element={<Activity />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
