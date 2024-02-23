@@ -272,14 +272,19 @@ exports.deleteBooking = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.getPendingsBooking = asyncErrorHandler(async (req, res, next) => {
-  const pendings = await new ApiFeatures(
-    Booking.find({ isApproved: false, isArchived: false }).select('-tokenHash'),
-    req.query
-  )
-    .paginate()
-    .sort()
-    .filter().query;
-  return res.status(200).json({ success: true, pendings });
+  const { bookingDate } = req.query;
+  if (!bookingDate) {
+    return next(new CustomError('Please provide bookingDate', 400));
+  }
+  const pendings = await Booking.find({
+    isApproved: false,
+    isArchived: false,
+    bookingDate,
+  }).select('-tokenHash');
+  if (pendings.length === 0) {
+    return next(new CustomError('No pending bookings', 404));
+  }
+  return res.status(200).json({ success: true, data: pendings });
 });
 
 // approved bookings and deleted bookings
@@ -303,6 +308,26 @@ exports.getDeletedBooking = asyncErrorHandler(async (req, res, next) => {
     .sort()
     .filter().query;
   return res.status(200).json({ success: true, deleted });
+});
+
+exports.getActivities = asyncErrorHandler(async (req, res, next) => {
+  const { bookingDate } = req.query;
+
+  if (!bookingDate) {
+    return next(new CustomError('Please provide bookingDate', 400));
+  }
+
+  const activities = await ActivityLog.find().populate('booking_id');
+
+  const filteredActivities = activities.filter(
+    (activity) => activity.booking_id.bookingDate === bookingDate
+  );
+
+  if (activities.length === 0) {
+    return next(new CustomError('No activities found', 404));
+  }
+
+  return res.status(200).json({ success: true, data: filteredActivities });
 });
 
 // exports.addCarTime = asyncErrorHandler(async (req, res, next) => {

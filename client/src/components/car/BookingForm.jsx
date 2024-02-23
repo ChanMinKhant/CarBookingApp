@@ -35,8 +35,6 @@ const BookingForm = ({
       console.log(err.response?.data?.message);
     }
   };
-  //if clicked the button, and isAdmin is true, then run tempFunc so that to get the filled form data
-  //this is not good bcz every time the component re-render, it will run this function
 
   useEffect(() => {
     if (clicked && isAdmin) {

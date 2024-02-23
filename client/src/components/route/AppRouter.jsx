@@ -10,6 +10,7 @@ import Loading from '../../utils/Loading';
 import ControlCarTime from '../controlCarTime/ControlCarTime';
 import Dashboard from '../dashboard/Dashboard';
 import Activity from '../dashboard/Activity/Activity';
+import Order from '../dashboard/Order/Order';
 
 const AppRouter = () => {
   const routes = [
@@ -66,6 +67,7 @@ const AppRouter = () => {
         )}
         <Route path='/dashboard/*' element={<Dashboard />}>
           <Route path='activity' element={<Activity />} />
+          <Route path='order' element={<Order />} />
         </Route>
       </Routes>
     </BrowserRouter>

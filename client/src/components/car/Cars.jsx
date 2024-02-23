@@ -19,7 +19,7 @@ const Cars = () => {
     chosenTime,
     chosenDirection,
   };
-
+  console.log(choseDate);
   useEffect(() => {
     const checkAdm = async () => {
       try {

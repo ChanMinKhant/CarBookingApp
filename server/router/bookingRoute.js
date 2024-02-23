@@ -8,6 +8,8 @@ router.route('/get-all-bookings').get(verifyJWT, bookingController.getBookings);
 router
   .route('/get-booking-data-for-form')
   .get(verifyJWT, bookingController.getBookingDataForForm);
+router.route('/pendingseats').get(bookingController.getPendingsBooking);
+router.route('/activities').get(bookingController.getActivities);
 router.route('/approve/:id').put(verifyJWT, bookingController.approveBooking);
 router.route('/cancel/:id').put(verifyJWT, bookingController.cancelBooking);
 router.route('/delete/:id').put(verifyJWT, bookingController.deleteBooking);

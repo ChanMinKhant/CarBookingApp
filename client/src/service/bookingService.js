@@ -25,10 +25,12 @@ export const createBook = async (data) => {
   }
 };
 
-export const getPendingSeats = async () => {
+export const getPendingSeats = async (bookingDate) => {
   try {
-    const response = await apiService.get('/pendingseats');
-    return response.data.pendingBookings;
+    const response = await apiService.get(
+      `/pendingseats?bookingDate=${bookingDate}`
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -38,6 +40,17 @@ export const getApprovedSeats = async () => {
   try {
     const response = await apiService.get('/approvedseats');
     return response.data.approvedBookings;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getActivities = async (bookingDate) => {
+  try {
+    const response = await apiService.get(
+      `/activities/?bookingDate=${bookingDate}`
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }
