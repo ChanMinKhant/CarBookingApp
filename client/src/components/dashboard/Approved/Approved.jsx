@@ -9,7 +9,13 @@ import ApprovedSeatsList from './approvedSeatsList';
 const Approved = () => {
   const today = new Date().toISOString().split('T')[0];
   const [bookingDate, setBookingDate] = useState(today);
-  const [approvedSeats, setPendingSeats] = useState([]);
+  const [approvedSeats, setApprovedSeats] = useState([]);
+  console.log(bookingDate);
+
+  const formatDate = (date) => {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return date.toLocaleDateString('en-GB', options);
+  };
 
   useEffect(() => {
     const fetchPendingSeats = async () => {
@@ -18,7 +24,7 @@ const Approved = () => {
           ? formatDate(new Date(bookingDate))
           : null;
         const approvedSeatData = await getApprovedSeats(formattedDate);
-        setPendingSeats(approvedSeatData.data);
+        setApprovedSeats(approvedSeatData.data);
       } catch (error) {
         console.log(error.response);
       }
@@ -28,17 +34,12 @@ const Approved = () => {
     }
   }, [bookingDate]);
 
-  const formatDate = (date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    return date.toLocaleDateString('en-GB', options);
-  };
-
   const handleCancel = async (id) => {
     try {
-      // show comfirmation message
-      window.confirm('Are you sure you want to cancel this booking?');
-      const response = await cancelBooking(id);
-      console.log(response);
+      if (window.confirm('Are you sure you want to cancel this booking?')) {
+        const response = await cancelBooking(id);
+        console.log(response);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -46,10 +47,10 @@ const Approved = () => {
 
   const handleDelete = async (id) => {
     try {
-      // show comfirmation message
-      window.confirm('Are you sure you want to delete this booking?');
-      const response = await deleteBooking(id);
-      console.log(response);
+      if (window.confirm('Are you sure you want to delete this booking?')) {
+        const response = await deleteBooking(id);
+        console.log(response);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -71,11 +72,14 @@ const Approved = () => {
             No approved seats found.
           </div>
         ) : (
-          <ApprovedSeatsList
-            approvedSeats={approvedSeats}
-            handleCancel={handleCancel}
-            handleDelete={handleDelete}
-          />
+          approvedSeats.map((seat, index) => (
+            <ApprovedSeatsList
+              key={index}
+              seat={seat}
+              handleCancel={handleCancel}
+              handleDelete={handleDelete}
+            />
+          ))
         )}
       </div>
     </div>

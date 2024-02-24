@@ -1,23 +1,21 @@
 import React from 'react';
 
-const Details = ({
-  status,
-  carTime,
-  userName,
-  phoneNumber,
-  showDetails,
-  pickupLocation,
-  deliveryLocation,
-  seatNumber,
-  travelDirection,
-  message,
-  toggleDetails,
-}) => {
+const Details = ({ data, showDetails, toggleDetails }) => {
+  const {
+    userName,
+    phoneNumber,
+    pickupLocation,
+    deliveryLocation,
+    carTime,
+    seatNumber,
+    travelDirection,
+    message,
+  } = data.booking_id;
   return (
-    <div>
+    <div className='flex items-center justify-center'>
       {' '}
       <div className='flex items-center justify-between mb-2'>
-        <span className='text-lg font-semibold'>{status}</span>
+        <span className='text-lg font-semibold'>{data.status}</span>
         <span className='text-gray-500'>{carTime}</span>
       </div>
       <div className='bg-white rounded-lg shadow-md p-4 mb-4'>

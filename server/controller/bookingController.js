@@ -293,9 +293,7 @@ exports.getApprovedBooking = asyncErrorHandler(async (req, res, next) => {
     isArchived: false,
     bookingDate,
   }).select('-tokenHash');
-  if (approved.length === 0) {
-    return next(new CustomError('No approved bookings', 404));
-  }
+
   return res.status(200).json({ success: true, data: approved });
 });
 
@@ -309,9 +307,6 @@ exports.getDeletedBooking = asyncErrorHandler(async (req, res, next) => {
     isArchived: true,
     bookingDate,
   }).select('-tokenHash');
-  if (pendings.length === 0) {
-    return next(new CustomError('No pending bookings', 404));
-  }
   return res.status(200).json({ success: true, data: pendings });
 });
 
@@ -322,19 +317,14 @@ exports.getActivities = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide bookingDate', 400));
   }
 
-  const activities = await ActivityLog.find().populate({
+  const activities = await ActivityLog.find().sort({ createdAt: -1 }).populate({
     path: 'booking_id',
     select: '-tokenHash', // Exclude the tokenHash field
   });
 
-  console.log(activities);
   const filteredActivities = activities.filter(
     (activity) => activity.booking_id.bookingDate === bookingDate
   );
-
-  if (activities.length === 0) {
-    return next(new CustomError('No activities found', 404));
-  }
 
   return res.status(200).json({ success: true, data: filteredActivities });
 });
