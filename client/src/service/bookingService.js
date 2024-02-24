@@ -36,10 +36,12 @@ export const getPendingSeats = async (bookingDate) => {
   }
 };
 
-export const getApprovedSeats = async () => {
+export const getApprovedSeats = async (bookingDate) => {
   try {
-    const response = await apiService.get('/approvedseats');
-    return response.data.approvedBookings;
+    const response = await apiService.get(
+      `/approvedseats/?bookingDate=${bookingDate}`
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -49,6 +51,17 @@ export const getActivities = async (bookingDate) => {
   try {
     const response = await apiService.get(
       `/activities/?bookingDate=${bookingDate}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getDeletedSeats = async (bookingDate) => {
+  try {
+    const response = await apiService.get(
+      `/deletedseats?bookingDate=${bookingDate}`
     );
     return response.data;
   } catch (error) {

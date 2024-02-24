@@ -11,6 +11,7 @@ import ControlCarTime from '../controlCarTime/ControlCarTime';
 import Dashboard from '../dashboard/Dashboard';
 import Activity from '../dashboard/Activity/Activity';
 import Order from '../dashboard/Order/Order';
+import Approved from '../dashboard/Approved/Approved';
 
 const AppRouter = () => {
   const routes = [
@@ -68,6 +69,7 @@ const AppRouter = () => {
         <Route path='/dashboard/*' element={<Dashboard />}>
           <Route path='activity' element={<Activity />} />
           <Route path='order' element={<Order />} />
+          <Route path='approved' element={<Approved />} />
         </Route>
       </Routes>
     </BrowserRouter>

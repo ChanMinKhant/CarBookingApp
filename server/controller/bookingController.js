@@ -49,7 +49,6 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-//"http://api-url/book"
 exports.createBook = asyncErrorHandler(async (req, res, next) => {
   const {
     userName, // form state
@@ -167,7 +166,6 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// "http://api-url"
 exports.getBookings = asyncErrorHandler(async (req, res, next) => {
   const requestedDate = new Date(req.query.date);
   const requestedTime = req.query.time;
@@ -216,7 +214,6 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// "http://api-url/:id"
 exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   //search booking by id and update isApproved field to true and return updated booking
@@ -237,7 +234,6 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
     .json({ success: true, message: 'Booking approved', updatedBooking });
 });
 
-// "http://api-url/:id"
 exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   // search booking by id and update isArchived field to true
@@ -287,27 +283,36 @@ exports.getPendingsBooking = asyncErrorHandler(async (req, res, next) => {
   return res.status(200).json({ success: true, data: pendings });
 });
 
-// approved bookings and deleted bookings
 exports.getApprovedBooking = asyncErrorHandler(async (req, res, next) => {
-  const approved = await new ApiFeatures(
-    Booking.find({ isApproved: true, isArchived: false }).select('-tokenHash'),
-    req.query
-  )
-    .paginate()
-    .sort()
-    .filter().query;
-  return res.status(200).json({ success: true, approved });
+  const { bookingDate } = req.query;
+  if (!bookingDate) {
+    return next(new CustomError('Please provide bookingDate', 400));
+  }
+  const approved = await Booking.find({
+    isApproved: true,
+    isArchived: false,
+    bookingDate,
+  }).select('-tokenHash');
+  if (approved.length === 0) {
+    return next(new CustomError('No approved bookings', 404));
+  }
+  return res.status(200).json({ success: true, data: approved });
 });
 
 exports.getDeletedBooking = asyncErrorHandler(async (req, res, next) => {
-  const deleted = await new ApiFeatures(
-    Booking.find({ isArchived: true }).select('-tokenHash'),
-    req.query
-  )
-    .paginate()
-    .sort()
-    .filter().query;
-  return res.status(200).json({ success: true, deleted });
+  const { bookingDate } = req.query;
+  if (!bookingDate) {
+    return next(new CustomError('Please provide bookingDate', 400));
+  }
+  const pendings = await Booking.find({
+    isApproved: false,
+    isArchived: true,
+    bookingDate,
+  }).select('-tokenHash');
+  if (pendings.length === 0) {
+    return next(new CustomError('No pending bookings', 404));
+  }
+  return res.status(200).json({ success: true, data: pendings });
 });
 
 exports.getActivities = asyncErrorHandler(async (req, res, next) => {
@@ -317,8 +322,12 @@ exports.getActivities = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide bookingDate', 400));
   }
 
-  const activities = await ActivityLog.find().populate('booking_id');
+  const activities = await ActivityLog.find().populate({
+    path: 'booking_id',
+    select: '-tokenHash', // Exclude the tokenHash field
+  });
 
+  console.log(activities);
   const filteredActivities = activities.filter(
     (activity) => activity.booking_id.bookingDate === bookingDate
   );
@@ -329,25 +338,6 @@ exports.getActivities = asyncErrorHandler(async (req, res, next) => {
 
   return res.status(200).json({ success: true, data: filteredActivities });
 });
-
-// exports.addCarTime = asyncErrorHandler(async (req, res, next) => {
-//   const { bookingDate, travelDirection } = req.body;
-//   console.log(bookingDate, travelDirection);
-//   if (!bookingDate || !travelDirection) {
-//     throw new CustomError(
-//       'Please provide bookingDate, travelDirection, and carTime',
-//       400
-//     );
-//   }
-
-//   let document = await AddCarTime.findOneAndUpdate(
-//     { bookingDate, travelDirection },
-//     { $inc: { count: 1 } },
-//     { upsert: true, new: true, setDefaultsOnInsert: true }
-//   );
-
-//   res.status(200).json({ success: true, data: document });
-// });
 
 exports.addCarTime = asyncErrorHandler(async (req, res, next) => {
   const { bookingDate, travelDirection } = req.body;

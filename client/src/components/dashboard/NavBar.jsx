@@ -25,16 +25,22 @@ const NavBar = () => {
               Orders
             </Link>
             <Link
-              to='/deleted'
+              to='/dashboard/approved'
               className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
             >
-              Deleted
+              Approved
             </Link>
             <Link
-              to='/approved-orders'
+              to='/dashboard/search'
               className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
             >
-              Approved Orders
+              Search
+            </Link>
+            <Link
+              to='/admin/controller'
+              className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
+            >
+              Admin
             </Link>
           </div>
         </div>
