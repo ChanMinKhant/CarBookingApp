@@ -47,6 +47,17 @@ export const getApprovedSeats = async (bookingDate) => {
   }
 };
 
+export const getSearchBookings = async (bookingDate, userName) => {
+  try {
+    const response = await apiService.get(
+      `/get-all-bookings/?bookingDate=${bookingDate}&userName=${userName}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getActivities = async (bookingDate) => {
   try {
     const response = await apiService.get(

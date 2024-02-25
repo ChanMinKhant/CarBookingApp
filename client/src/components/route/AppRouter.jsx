@@ -12,6 +12,7 @@ import Dashboard from '../dashboard/Dashboard';
 import Activity from '../dashboard/Activity/Activity';
 import Order from '../dashboard/Order/Order';
 import Approved from '../dashboard/Approved/Approved';
+import Search from '../dashboard/Search/Search';
 
 const AppRouter = () => {
   const routes = [
@@ -70,6 +71,7 @@ const AppRouter = () => {
           <Route path='activity' element={<Activity />} />
           <Route path='order' element={<Order />} />
           <Route path='approved' element={<Approved />} />
+          <Route path='search' element={<Search />} />
         </Route>
       </Routes>
     </BrowserRouter>

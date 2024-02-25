@@ -166,22 +166,6 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-exports.getBookings = asyncErrorHandler(async (req, res, next) => {
-  const requestedDate = new Date(req.query.date);
-  const requestedTime = req.query.time;
-  let query = {
-    bookingDate: requestedDate,
-  };
-  if (requestedTime) {
-    query.carTime = requestedTime;
-  }
-  const existingBookings = await Booking.find(query);
-  res.status(200).json({
-    success: true,
-    existingBookings,
-  });
-});
-
 exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
   const { date, time, from, seatNumber } = req.query;
   if (!date || !time || !from || !seatNumber) {
@@ -406,5 +390,45 @@ exports.getCount = asyncErrorHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     count: document.count,
+  });
+});
+
+exports.getBookings = asyncErrorHandler(async (req, res, next) => {
+  const { bookingDate, userName } = req.query;
+
+  let query = {};
+  if (bookingDate) {
+    query = { ...query, bookingDate };
+  }
+  if (userName) {
+    query = { ...query, userName };
+  }
+  const doc = await Booking.find(query);
+  console.log(doc);
+  return res.status(200).json({
+    success: true,
+    data: doc,
+  });
+});
+
+exports.getBookings = asyncErrorHandler(async (req, res, next) => {
+  const { bookingDate, userName } = req.query;
+  console.log(bookingDate, userName);
+  let query = {}; // Construct query dynamically using userName from request
+  if (bookingDate !== 'null') {
+    query = { ...query, bookingDate };
+  }
+  if (userName.trim() !== '') {
+    query = { ...query, userName };
+  }
+  if (Object.keys(query).length === 0) {
+    return next(new CustomError('Please provide bookingDate or userName', 400));
+  }
+  console.log(query);
+  const doc = await Booking.find(query);
+  console.log(doc);
+  return res.status(200).json({
+    success: true,
+    data: doc,
   });
 });
