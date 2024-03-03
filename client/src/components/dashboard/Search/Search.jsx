@@ -6,6 +6,7 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [bookingDate, setBookingDate] = useState(null);
   const [data, setData] = useState([]);
+  const [searched, setSearched] = useState(false); // New state to track if search has been performed
 
   const handleChange = (e) => {
     setSearchTerm(e.target.value);
@@ -21,13 +22,22 @@ const Search = () => {
       ? formatDate(new Date(bookingDate))
       : null;
     const userName = searchTerm;
-    const data = await getSearchBookings(formattedDate, userName);
-    setData(data.data);
-    console.log(data.data);
+    try {
+      const responseData = await getSearchBookings(formattedDate, userName);
+      setData(responseData.data);
+      setSearched(true); // Set searched to true after search is performed
+    } catch (error) {
+      alert(error.response.data.message);
+    }
   };
 
   const formatDate = (date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Asia/Yangon',
+    };
     return date.toLocaleDateString('en-GB', options);
   };
 
@@ -42,7 +52,6 @@ const Search = () => {
             onChange={handleChange}
             className='appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none'
           />
-
           <button
             type='submit'
             className='flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded'
@@ -57,7 +66,21 @@ const Search = () => {
           style={{ border: '2px solid black', fontSize: '1rem' }}
         />
       </form>
-      <SearchResult data={data} />
+      {searched && data.length === 0 && (
+        <div className='text-center mt-4 text-red-500 font-bold'>
+          No result found.
+        </div>
+      )}
+      {data.length > 0 && (
+        <>
+          <div className='text-center mt-4'>
+            <span className='text-lg font-bold'>Result: {data.length}</span>
+          </div>
+          <div className='grid grid-cols-1 gap-4 mt-4'>
+            <SearchResult data={data} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

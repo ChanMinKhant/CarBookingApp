@@ -13,7 +13,12 @@ const Approved = () => {
   console.log(bookingDate);
 
   const formatDate = (date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Asia/Yangon',
+    };
     return date.toLocaleDateString('en-GB', options);
   };
 
@@ -38,6 +43,7 @@ const Approved = () => {
     try {
       if (window.confirm('Are you sure you want to cancel this booking?')) {
         const response = await cancelBooking(id);
+        setApprovedSeats(approvedSeats.filter((seat) => seat._id !== id));
         console.log(response);
       }
     } catch (error) {
@@ -49,6 +55,7 @@ const Approved = () => {
     try {
       if (window.confirm('Are you sure you want to delete this booking?')) {
         const response = await deleteBooking(id);
+        setApprovedSeats(approvedSeats.filter((seat) => seat._id !== id));
         console.log(response);
       }
     } catch (error) {
@@ -66,20 +73,29 @@ const Approved = () => {
           style={{ border: '2px solid black', fontSize: '2rem' }}
         />
       </div>
+
       <div className='mt-4'>
         {approvedSeats.length === 0 ? (
-          <div className='flex justify-center mt-4 text-4xl text-red-500 '>
+          <div className='flex justify-center mt-4 text-4xl text-red-500'>
             No approved seats found.
           </div>
         ) : (
-          approvedSeats.map((seat, index) => (
-            <ApprovedSeatsList
-              key={index}
-              seat={seat}
-              handleCancel={handleCancel}
-              handleDelete={handleDelete}
-            />
-          ))
+          <div>
+            <div className='text-center mt-4'>
+              <span className='text-lg font-bold'>{approvedSeats.length}</span>{' '}
+              Approved Seats
+            </div>
+            <div className='grid grid-cols-1 gap-4 mt-4'>
+              {approvedSeats.map((seat, index) => (
+                <ApprovedSeatsList
+                  key={index}
+                  seat={seat}
+                  handleCancel={handleCancel}
+                  handleDelete={handleDelete}
+                />
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>

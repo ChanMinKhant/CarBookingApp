@@ -34,7 +34,12 @@ const Activity = () => {
   };
 
   const formatDate = (date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Asia/Yangon',
+    };
     return date.toLocaleDateString('en-GB', options);
   };
 

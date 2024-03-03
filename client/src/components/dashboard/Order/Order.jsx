@@ -14,11 +14,18 @@ const Order = () => {
   useEffect(() => {
     const fetchPendingSeats = async () => {
       try {
-        const formattedDate = bookingDate
-          ? formatDate(new Date(bookingDate))
-          : null;
-        const pendingSeatsData = await getPendingSeats(formattedDate);
-        setPendingSeats(pendingSeatsData.data);
+        if (bookingDate === 'all') {
+          console.log(bookingDate);
+          const pendingSeatsData = await getPendingSeats(bookingDate);
+          setPendingSeats(pendingSeatsData.data);
+        } else {
+          const formattedDate = bookingDate
+            ? formatDate(new Date(bookingDate))
+            : null;
+          console.log(formattedDate);
+          const pendingSeatsData = await getPendingSeats(formattedDate);
+          setPendingSeats(pendingSeatsData.data);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -27,20 +34,26 @@ const Order = () => {
       fetchPendingSeats();
     }
   }, [bookingDate]);
+  console.log(bookingDate);
 
   const formatDate = (date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Asia/Yangon',
+    };
     return date.toLocaleDateString('en-GB', options);
   };
-  console.log(bookingDate);
 
   const handleApprove = async (id) => {
     try {
       // show comfirmation message
-      window.confirm('Are you sure you want to approve this booking?');
-      const response = await approveBooking(id);
-      setPendingSeats(pendingSeats.filter((seat) => seat._id !== id));
-      console.log(response);
+      if (window.confirm('Are you sure you want to approve this booking?')) {
+        const response = await approveBooking(id);
+        setPendingSeats(pendingSeats.filter((seat) => seat._id !== id));
+        console.log(response);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -49,12 +62,13 @@ const Order = () => {
   const handleDelete = async (id) => {
     try {
       // show comfirmation message
-      window.confirm('Are you sure you want to delete this booking?');
-      const response = await deleteBooking(id);
-      setPendingSeats(pendingSeats.filter((seat) => seat._id !== id));
-      console.log(response);
+      if (window.confirm('Are you sure you want to delete this booking?')) {
+        const response = await deleteBooking(id);
+        setPendingSeats(pendingSeats.filter((seat) => seat._id !== id));
+        console.log(response);
+      }
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
   };
 
@@ -68,17 +82,36 @@ const Order = () => {
           style={{ border: '2px solid black', fontSize: '2rem' }}
         />
       </div>
+      <div className='flex justify-center mt-4'>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={() => {
+            setBookingDate('all');
+          }}
+        >
+          View all orders
+        </button>
+      </div>
       <div className='mt-4'>
         {pendingSeats.length === 0 ? (
-          <div className='flex justify-center mt-4 text-4xl text-red-500 '>
+          <div className='flex justify-center mt-4 text-4xl text-red-500'>
             No order found.
           </div>
         ) : (
-          <PendingSeatsList
-            pendingSeats={pendingSeats}
-            handleApprove={handleApprove}
-            handleDelete={handleDelete}
-          />
+          <div>
+            <div className='text-center mt-4'>
+              <span className='text-lg font-bold'>
+                Result: {pendingSeats.length}
+              </span>
+            </div>
+            <div className='grid grid-cols-1 gap-4 mt-4'>
+              <PendingSeatsList
+                pendingSeats={pendingSeats}
+                handleApprove={handleApprove}
+                handleDelete={handleDelete}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>

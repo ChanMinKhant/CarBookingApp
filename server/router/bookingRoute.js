@@ -4,7 +4,7 @@ const { verifyJWT } = require('./../middleware/verifyJWT');
 
 router.get('/checkseat', bookingController.checkseat);
 router.post('/create-book', bookingController.createBook);
-router.route('/get-all-bookings').get(verifyJWT, bookingController.getBookings);
+router.route('/search').get(verifyJWT, bookingController.getSearchBookings);
 router
   .route('/get-booking-data-for-form')
   .get(verifyJWT, bookingController.getBookingDataForForm);

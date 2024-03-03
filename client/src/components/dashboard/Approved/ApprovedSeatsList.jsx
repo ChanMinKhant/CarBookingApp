@@ -1,6 +1,19 @@
 import React from 'react';
 
 const ApprovedSeatsList = ({ seat, handleCancel, handleDelete }) => {
+  console.log(seat);
+  const createdAtDate = new Date(seat.updatedAt);
+
+  // Format options for toLocaleString
+  const options = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Asia/Yangon',
+  };
+
+  // Format the time in Myanmar time
+  const formattedTime = createdAtDate.toLocaleString('en-US', options);
   return (
     <div>
       <div className='border p-4 my-2 flex flex-col justify-center items-center'>
@@ -9,6 +22,9 @@ const ApprovedSeatsList = ({ seat, handleCancel, handleDelete }) => {
         </p>
         <p>
           <strong>Car Time:</strong> {seat.carTime}
+        </p>
+        <p>
+          <strong>Approved At:</strong> {formattedTime}
         </p>
         <p>
           <strong>Delivery Location:</strong> {seat.deliveryLocation}

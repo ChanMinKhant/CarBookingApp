@@ -256,14 +256,19 @@ exports.getPendingsBooking = asyncErrorHandler(async (req, res, next) => {
   if (!bookingDate) {
     return next(new CustomError('Please provide bookingDate', 400));
   }
+  console.log(bookingDate);
+  if (bookingDate === 'all') {
+    const bookings = await Booking.find({
+      isApproved: false,
+      isArchived: false,
+    }).select('-tokenHash');
+    return res.status(200).json({ success: true, data: bookings });
+  }
   const pendings = await Booking.find({
     isApproved: false,
     isArchived: false,
     bookingDate,
   }).select('-tokenHash');
-  if (pendings.length === 0) {
-    return next(new CustomError('No pending bookings', 404));
-  }
   return res.status(200).json({ success: true, data: pendings });
 });
 
@@ -393,25 +398,7 @@ exports.getCount = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-exports.getBookings = asyncErrorHandler(async (req, res, next) => {
-  const { bookingDate, userName } = req.query;
-
-  let query = {};
-  if (bookingDate) {
-    query = { ...query, bookingDate };
-  }
-  if (userName) {
-    query = { ...query, userName };
-  }
-  const doc = await Booking.find(query);
-  console.log(doc);
-  return res.status(200).json({
-    success: true,
-    data: doc,
-  });
-});
-
-exports.getBookings = asyncErrorHandler(async (req, res, next) => {
+exports.getSearchBookings = asyncErrorHandler(async (req, res, next) => {
   const { bookingDate, userName } = req.query;
   console.log(bookingDate, userName);
   let query = {}; // Construct query dynamically using userName from request
@@ -419,7 +406,8 @@ exports.getBookings = asyncErrorHandler(async (req, res, next) => {
     query = { ...query, bookingDate };
   }
   if (userName.trim() !== '') {
-    query = { ...query, userName };
+    const partialUserName = new RegExp(userName, 'i');
+    query = { ...query, userName: { $regex: partialUserName } };
   }
   if (Object.keys(query).length === 0) {
     return next(new CustomError('Please provide bookingDate or userName', 400));

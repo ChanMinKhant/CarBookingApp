@@ -11,6 +11,19 @@ const Details = ({ data, showDetails, toggleDetails }) => {
     travelDirection,
     message,
   } = data.booking_id;
+  const { createdAt } = data;
+  const createdAtDate = new Date(createdAt);
+
+  // Format options for toLocaleString
+  const options = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Asia/Yangon',
+  };
+
+  // Format the time in Myanmar time
+  const formattedTime = createdAtDate.toLocaleString('en-US', options);
   return (
     <div className='flex items-center justify-center'>
       {' '}
@@ -26,6 +39,10 @@ const Details = ({ data, showDetails, toggleDetails }) => {
         <div className='flex items-center mb-2'>
           <span className='text-gray-500'>Phone Number: </span>
           <span>{phoneNumber}</span>
+        </div>
+        <div className='flex items-center mb-2'>
+          <span className='text-gray-500'>Date: </span>
+          <span>{formattedTime}</span>
         </div>
         {showDetails && (
           <>

@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 const DateDropdown = ({ setChoseDate }) => {
   const [dates, setDates] = useState([]);
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const options = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'Asia/Yangon',
+  };
 
   const handleChooseDate = (event) => {
     setChoseDate(event.target.value);
