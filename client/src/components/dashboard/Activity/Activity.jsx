@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Details from './Details';
-import { getActivities } from '../../../service/bookingService';
+import React, { useState, useEffect } from "react";
+import Details from "./Details";
+import { getActivities } from "../../../service/bookingService";
 
 const Activity = () => {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const [showDetails, setShowDetails] = useState(false);
   const [bookingDate, setBookingDate] = useState(today);
   const [activityData, setActivityData] = useState([]);
@@ -35,26 +35,26 @@ const Activity = () => {
 
   const formatDate = (date) => {
     const options = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'Asia/Yangon',
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "Asia/Yangon",
     };
-    return date.toLocaleDateString('en-GB', options);
+    return date.toLocaleDateString("en-GB", options);
   };
 
   return (
     <div>
-      <div className='flex justify-center mt-4'>
+      <div className="flex justify-center mt-4">
         <input
-          type='date'
+          type="date"
           defaultValue={today}
           onChange={(e) => setBookingDate(e.target.value)}
-          style={{ border: '2px solid black', fontSize: '2rem' }}
+          style={{ border: "2px solid black", fontSize: "2rem" }}
         />
       </div>
       {activityData.length === 0 ? (
-        <div className='flex justify-center mt-4 text-4xl text-red-500 '>
+        <div className="flex justify-center mt-4 text-4xl text-red-500 ">
           No activity found.
         </div>
       ) : (
