@@ -68,16 +68,29 @@ const CarInterface = ({
 
   const postToServer = async () => {
     try {
-      const res = await createBook(book);
-      toast.success('Booking successful', {
-        position: 'top-center',
-      });
-      setOpen(false);
-      sessionStorage.setItem('book', JSON.stringify(book));
-      setDefaultBook();
-      toast.success('Booking successful');
+      // const existingBookingsJSON = sessionStorage.getItem('bookings');
+      // const existingBookings = existingBookingsJSON
+      //   ? JSON.parse(existingBookingsJSON)
+      //   : [];
+      // if (existingBookings.length < 2) {
+      //   const res = await createBook(book);
+      //   toast.success('Booking successful', {
+      //     position: 'top-center',
+      //   });
+      //   setOpen(false);
+      //   existingBookings.push(book);
+      //   console.log(existingBookings);
+      //   sessionStorage.setItem('book', JSON.stringify(existingBookings));
+      //   setDefaultBook();
+      //   toast.success('Booking successful');
+      // } else {
+      //   toast.error('You can only book 5 seats at a time', {
+      //     position: 'top-center',
+      //   });
+      // }
     } catch (error) {
-      toast.error(error.response.data?.message || 'Booking failed', {
+      console.log(error.response?.data?.message);
+      toast.error(error.response?.data?.message || 'Booking failed', {
         position: 'top-center',
       });
     }

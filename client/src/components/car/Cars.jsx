@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { checkAdmin } from '../../service/adminService';
+import useAdminCheck from '../../hooks/useAdminCheck';
 import DateDropdown from '../../utils/DateDropdown';
 import TimeDropdown from '../../utils/TimeDropdown';
+import Loading from '../../utils/Loading';
 import TravelDirectionDropdown from '../../utils/TravelDirectionDropdown';
 import CarInterface from './CarInterface';
 import { getCount } from '../../service/bookingService';
@@ -12,31 +13,22 @@ const Cars = () => {
   const [choseDate, setChoseDate] = React.useState('');
   const [chosenTime, setChosenTime] = React.useState('');
   const [chosenDirection, setChosenDirection] = React.useState('');
-  const [isAdmin, setIsAdmin] = React.useState(false);
   const [count, setCount] = React.useState(0);
   const data = {
     choseDate,
     chosenTime,
     chosenDirection,
   };
-  console.log(choseDate);
-  useEffect(() => {
-    const checkAdm = async () => {
-      try {
-        const response = await checkAdmin();
-        setIsAdmin(Boolean(response.isAdmin));
-      } catch (error) {
-        setIsAdmin(false);
-      }
-    };
-    checkAdm();
-  }, []);
+  const { isAdmin, loading, setLoading } = useAdminCheck();
+  console.log(isAdmin, loading);
 
   useEffect(() => {
     const getCounts = async () => {
       try {
+        setLoading(true);
         const response = await getCount(choseDate, chosenDirection);
         setCount(response.count);
+        setLoading(false);
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -44,6 +36,7 @@ const Cars = () => {
     if (choseDate && chosenDirection) getCounts();
   }, [choseDate, chosenDirection]);
   console.log(count);
+  if (loading) return <Loading />;
   return (
     <div className='flex flex-col justify-center items-center w-full h-auto'>
       {/* Car img */}

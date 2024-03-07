@@ -20,6 +20,7 @@ const AdminLoginForm = () => {
         toast.success(res?.data?.message || 'you are admin', {
           position: 'top-center',
         });
+        navigate('/');
       }
     } catch (error) {
       console.log(error.response);

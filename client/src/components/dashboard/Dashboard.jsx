@@ -1,8 +1,22 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import useAdminCheck from '../../hooks/useAdminCheck';
 import NavBar from './NavBar';
+import Loading from '../../utils/Loading';
 
 const Dashboard = () => {
+  const { isAdmin, loading } = useAdminCheck();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Perform navigation if user is not an admin
+    if (!isAdmin) {
+      navigate('/login');
+    }
+  }, [isAdmin, navigate]);
+
+  if (loading) return <Loading />;
+
   return (
     <div>
       <NavBar />
