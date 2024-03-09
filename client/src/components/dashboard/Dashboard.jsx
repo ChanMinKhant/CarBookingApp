@@ -10,10 +10,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Perform navigation if user is not an admin
-    if (!isAdmin) {
+    if (!isAdmin && !loading) {
       navigate('/login');
     }
-  }, [isAdmin, navigate]);
+  }, [isAdmin, loading, navigate]);
 
   if (loading) return <Loading />;
 

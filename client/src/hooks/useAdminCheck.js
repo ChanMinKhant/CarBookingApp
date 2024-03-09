@@ -3,7 +3,7 @@ import { checkAdmin } from '../service/adminService';
 
 const useAdminCheck = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAdminStatus = async () => {

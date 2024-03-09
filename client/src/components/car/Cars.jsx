@@ -36,7 +36,7 @@ const Cars = () => {
     if (choseDate && chosenDirection) getCounts();
   }, [choseDate, chosenDirection]);
   console.log(count);
-  if (loading) return <Loading />;
+  // if (loading) return <Loading />;
   return (
     <div className='flex flex-col justify-center items-center w-full h-auto'>
       {/* Car img */}
@@ -49,7 +49,7 @@ const Cars = () => {
         />
         <TravelDirectionDropdown setChosenDirection={setChosenDirection} />
       </div>
-      <CarInterface data={data} isAdmin={isAdmin} />
+      {loading ? <Loading /> : <CarInterface data={data} isAdmin={isAdmin} />}
     </div>
   );
 };

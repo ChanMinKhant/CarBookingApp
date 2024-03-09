@@ -68,32 +68,55 @@ const CarInterface = ({
 
   const postToServer = async () => {
     try {
-      // const existingBookingsJSON = sessionStorage.getItem('bookings');
-      // const existingBookings = existingBookingsJSON
-      //   ? JSON.parse(existingBookingsJSON)
-      //   : [];
-      // if (existingBookings.length < 2) {
-      //   const res = await createBook(book);
-      //   toast.success('Booking successful', {
-      //     position: 'top-center',
-      //   });
-      //   setOpen(false);
-      //   existingBookings.push(book);
-      //   console.log(existingBookings);
-      //   sessionStorage.setItem('book', JSON.stringify(existingBookings));
-      //   setDefaultBook();
-      //   toast.success('Booking successful');
-      // } else {
-      //   toast.error('You can only book 5 seats at a time', {
-      //     position: 'top-center',
-      //   });
-      // }
+      const existingBookingsJSON = localStorage.getItem('bookings');
+      let existingBookings = existingBookingsJSON
+        ? JSON.parse(existingBookingsJSON)
+        : [];
+
+      // Get current date in Myanmar time
+      const currentMyanmarTime = new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Yangon',
+      });
+
+      // Calculate expiry time (Tomorrow at 12:00 AM Myanmar time)
+      const expiryTime = new Date(currentMyanmarTime);
+      expiryTime.setDate(expiryTime.getDate() + 1); // Tomorrow
+      expiryTime.setHours(0, 0, 0, 0); // Set time to midnight
+
+      const bookingWithExpiry = { ...book, expiryTime: expiryTime.getTime() };
+
+      if (existingBookings.length < 3 || isAdmin) {
+        const res = await createBook(bookingWithExpiry);
+        toast.success('Booking successful', { position: 'top-center' });
+        setOpen(false);
+        existingBookings.push(bookingWithExpiry);
+        console.log(existingBookings);
+        localStorage.setItem('bookings', JSON.stringify(existingBookings));
+
+        setDefaultBook();
+        toast.success('Booking successful');
+
+        // Check for and remove expired bookings
+        removeExpiredBookings(existingBookings);
+      } else {
+        toast.error('You can only book 3 seats at a time, call the admin', {
+          position: 'top-center',
+        });
+      }
     } catch (error) {
       console.log(error.response?.data?.message);
       toast.error(error.response?.data?.message || 'Booking failed', {
         position: 'top-center',
       });
     }
+  };
+
+  const removeExpiredBookings = (bookings) => {
+    const currentTime = new Date().getTime();
+    const updatedBookings = bookings.filter(
+      (booking) => booking.expiryTime > currentTime
+    );
+    localStorage.setItem('bookings', JSON.stringify(updatedBookings));
   };
 
   const setDefaultBook = () => {
@@ -133,6 +156,7 @@ const CarInterface = ({
           isAdmin={isAdmin}
           Number={1}
         />
+        <div>You cant choose the seats for back</div>
         <div className='flex justify-center items-center'>
           <CarSeatIcon
             isApproved={isSeatApproved(2)}
