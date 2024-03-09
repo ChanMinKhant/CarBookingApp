@@ -72,20 +72,21 @@ const CarInterface = ({
       let existingBookings = existingBookingsJSON
         ? JSON.parse(existingBookingsJSON)
         : [];
-
+      // filter out expired bookings
+      existingBookings = removeExpiredBookings(existingBookings);
       // Get current date in Myanmar time
-      const currentMyanmarTime = new Date().toLocaleString('en-US', {
-        timeZone: 'Asia/Yangon',
-      });
-
-      // Calculate expiry time (Tomorrow at 12:00 AM Myanmar time)
-      const expiryTime = new Date(currentMyanmarTime);
-      expiryTime.setDate(expiryTime.getDate() + 1); // Tomorrow
-      expiryTime.setHours(0, 0, 0, 0); // Set time to midnight
-
-      const bookingWithExpiry = { ...book, expiryTime: expiryTime.getTime() };
-
       if (existingBookings.length < 3 || isAdmin) {
+        const currentMyanmarTime = new Date().toLocaleString('en-US', {
+          timeZone: 'Asia/Yangon',
+        });
+
+        // Calculate expiry time (Tomorrow at 12:00 AM Myanmar time)
+        const expiryTime = new Date(currentMyanmarTime);
+        expiryTime.setDate(expiryTime.getDate() + 1); // Tomorrow
+        expiryTime.setHours(0, 0, 0, 0); // Set time to midnight
+
+        const bookingWithExpiry = { ...book, expiryTime: expiryTime.getTime() };
+
         const res = await createBook(bookingWithExpiry);
         toast.success('Booking successful', { position: 'top-center' });
         setOpen(false);
@@ -97,7 +98,6 @@ const CarInterface = ({
         toast.success('Booking successful');
 
         // Check for and remove expired bookings
-        removeExpiredBookings(existingBookings);
       } else {
         toast.error('You can only book 3 seats at a time, call the admin', {
           position: 'top-center',
@@ -117,6 +117,7 @@ const CarInterface = ({
       (booking) => booking.expiryTime > currentTime
     );
     localStorage.setItem('bookings', JSON.stringify(updatedBookings));
+    return updatedBookings;
   };
 
   const setDefaultBook = () => {

@@ -40,6 +40,7 @@ const Cars = () => {
   return (
     <div className='flex flex-col justify-center items-center w-full h-auto'>
       {/* Car img */}
+      <h1 className='text-4xl font-bold'>Mate Sat Car</h1>
       <div className='flex flex-col items-start justify-center'>
         <DateDropdown setChoseDate={setChoseDate} />
         <TimeDropdown
@@ -50,6 +51,11 @@ const Cars = () => {
         <TravelDirectionDropdown setChosenDirection={setChosenDirection} />
       </div>
       {loading ? <Loading /> : <CarInterface data={data} isAdmin={isAdmin} />}
+      {isAdmin && (
+        <Link to='https://mgmg.com' className='text-blue-500 underline'>
+          Visit mgmg.com
+        </Link>
+      )}
     </div>
   );
 };
