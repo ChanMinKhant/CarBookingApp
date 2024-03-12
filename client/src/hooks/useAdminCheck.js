@@ -1,15 +1,54 @@
+// import { useState, useEffect } from 'react';
+// import { checkAdmin } from '../service/adminService';
+
+// const useAdminCheck = () => {
+//   const [isAdmin, setIsAdmin] = useState(false);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const checkAdminStatus = async () => {
+//       try {
+//         const response = await checkAdmin();
+//         setIsAdmin(Boolean(response.isAdmin));
+//       } catch (error) {
+//         setIsAdmin(false);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     if (!isAdmin && loading) {
+//       checkAdminStatus();
+//     } else {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   return { isAdmin, loading, setLoading };
+// };
+
+// export default useAdminCheck;
+
+// version 2 using session storage
+
 import { useState, useEffect } from 'react';
 import { checkAdmin } from '../service/adminService';
 
 const useAdminCheck = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    // Check if isAdmin status is stored in session storage
+    const isAdminCached = sessionStorage.getItem('isAdmin');
+    return isAdminCached ? JSON.parse(isAdminCached) : false;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
         const response = await checkAdmin();
-        setIsAdmin(Boolean(response.isAdmin));
+        const isAdmin = Boolean(response.isAdmin);
+        setIsAdmin(isAdmin);
+        // Store isAdmin status in session storage
+        sessionStorage.setItem('isAdmin', JSON.stringify(isAdmin));
       } catch (error) {
         setIsAdmin(false);
       } finally {
@@ -17,7 +56,12 @@ const useAdminCheck = () => {
       }
     };
 
-    checkAdminStatus();
+    // Only run the effect once during component mount
+    if (!isAdmin && loading) {
+      checkAdminStatus();
+    } else {
+      setLoading(false); // If isAdmin is already set, stop loading
+    }
   }, []);
 
   return { isAdmin, loading, setLoading };
