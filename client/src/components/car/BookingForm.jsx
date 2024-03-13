@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  getBookingDataForForm,
-  cancelBooking,
-  approveBooking,
-  deleteBooking,
-} from '../../service/bookingService';
-import { toast, ToastContainer } from 'react-toastify';
+import { getBookingDataForForm } from '../../service/bookingService';
 
 const BookingForm = ({
   addDataToBook,
@@ -18,6 +12,9 @@ const BookingForm = ({
   clicked,
   setClicked,
   setDefaultBook,
+  handleApproveBooking,
+  handleCancleBooking,
+  handleDeleteBooking,
 }) => {
   const tempFunc = async () => {
     try {
@@ -44,33 +41,6 @@ const BookingForm = ({
 
   const handleInputChange = (property, evt) => {
     addDataToBook({ [property]: evt.target.value });
-  };
-
-  const handleApproveBooking = async () => {
-    try {
-      const res = await approveBooking(book?._id);
-      toast.success('Booking Approved');
-    } catch (err) {
-      console.log(err.response?.data?.message);
-    }
-  };
-
-  const handleCancleBooking = async () => {
-    try {
-      const res = await cancelBooking(book?._id);
-      console.log(res);
-    } catch (err) {
-      console.log(err.response?.data?.message);
-    }
-  };
-
-  const handleDeleteBooking = async () => {
-    try {
-      const res = await deleteBooking(book?._id);
-      console.log(res);
-    } catch (err) {
-      console.log(err.response?.data?.message);
-    }
   };
 
   if (open) {
@@ -157,14 +127,16 @@ const BookingForm = ({
           {isAdmin &&
             (book.isApproved ? (
               <button
-                onClick={handleCancleBooking}
+                onClick={() => {
+                  handleCancleBooking(book?._id);
+                }}
                 className='m-2 bg-orange-500 hover:bg-orange-300 hover:border-solid hover:border-2 hover:border-orange-600 active:shadow-md text-white w-32 rounded-full p-2'
               >
                 Cancle
               </button>
             ) : (
               <button
-                onClick={handleApproveBooking}
+                onClick={() => handleApproveBooking(book?._id)}
                 className='m-2 bg-orange-600 hover:bg-orange-300 text-white w-auto rounded-full p-2'
               >
                 Approve
@@ -173,7 +145,7 @@ const BookingForm = ({
           {isAdmin && (
             <button
               className='m-2 bg-orange-600 hover:bg-orange-300 hover:border-solid hover:border-2 hover:border-orange-600 active:shadow-md w-32 text-white rounded-full p-2'
-              onClick={handleDeleteBooking}
+              onClick={() => handleDeleteBooking(book?._id)}
             >
               delete
             </button>

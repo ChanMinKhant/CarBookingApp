@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
 const TimeDropdown = ({ setChosenTime, choseDate, count }) => {
-  const [times] = useState(['6:00', '6:05', '6:10', '6:15', '6:20']);
+  const [times] = useState([
+    '6:00',
+    '6:05',
+    '6:10',
+    '6:15',
+    '6:20',
+    '6:25',
+    '6:30',
+    '6:35',
+    '6:40',
+    '6:45',
+  ]);
   const handleChooseTime = (event) => {
     setChosenTime(event.target.value);
   };

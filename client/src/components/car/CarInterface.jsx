@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   checkSeatAvailability,
   createBook,
-  getApprovedSeats,
+  cancelBooking,
+  approveBooking,
+  deleteBooking,
 } from '../../service/bookingService';
 import CarSeatIcon from '../../utils/CarSeatIcon';
 import BookingForm from './BookingForm';
@@ -41,7 +43,6 @@ const CarInterface = ({
       if (choseDate) {
         const { pendingSeats, availableSeats, approvedSeats } =
           await checkSeatAvailability(choseDate, chosenTime, chosenDirection);
-        console.log(availableSeats);
         setApprovedSeats(approvedSeats);
         setAvailableSeats(availableSeats);
         setPendingSeats(pendingSeats);
@@ -56,12 +57,55 @@ const CarInterface = ({
         bookingDate: choseDate,
       });
     }
-  }, [choseDate, chosenDirection, chosenTime, open]);
+  }, [choseDate, chosenDirection, chosenTime]);
 
   const isSeatBooked = (seatNum) => availableSeats.includes(seatNum);
   const isSeatPending = (seatNum) => pendingSeats.includes(seatNum);
   const isSeatApproved = (seatNum) => approvedSeats.includes(seatNum);
 
+  const handleApproveBooking = async (id) => {
+    try {
+      const res = await approveBooking(id);
+      toast.success('Booking Approved');
+      console.log(res);
+      setApprovedSeats([...approvedSeats, res.seatNumber]);
+      setOpen(false);
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err.response?.data?.message || 'you are not admin. please login'
+      );
+    }
+  };
+
+  const handleCancleBooking = async (id) => {
+    try {
+      const res = await cancelBooking(id);
+      toast.success('Booking Canceled');
+      setApprovedSeats(approvedSeats.filter((seat) => seat !== res.seatNumber));
+      setPendingSeats([...pendingSeats, res.seatNumber]);
+      setOpen(false);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || 'you are not admin. please login'
+      );
+    }
+  };
+
+  const handleDeleteBooking = async (id) => {
+    try {
+      const res = await deleteBooking(id);
+      toast.success('Booking Deleted');
+      setPendingSeats(pendingSeats.filter((seat) => seat !== res.seatNumber));
+      setApprovedSeats(approvedSeats.filter((seat) => seat !== res.seatNumber));
+      setAvailableSeats([...availableSeats, res.seatNumber]);
+      setOpen(false);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || 'you are not admin. please login'
+      );
+    }
+  };
   const addDataToBook = (data) => {
     setBook({ ...book, ...data });
   };
@@ -89,6 +133,7 @@ const CarInterface = ({
 
         const res = await createBook(bookingWithExpiry);
         toast.success('Booking successful', { position: 'top-center' });
+        setPendingSeats([...pendingSeats, res.seatNumber]);
         setOpen(false);
         existingBookings.push(bookingWithExpiry);
         console.log(existingBookings);
@@ -147,6 +192,9 @@ const CarInterface = ({
         clicked={clicked}
         setClicked={setClicked}
         setDefaultBook={setDefaultBook}
+        handleApproveBooking={handleApproveBooking}
+        handleCancleBooking={handleCancleBooking}
+        handleDeleteBooking={handleDeleteBooking}
       />
       <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
         <CarSeatIcon

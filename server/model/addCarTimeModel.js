@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { carTimes } = require('../util/enum');
 
 const addCarTimeSchema = new mongoose.Schema({
   travelDirection: {
@@ -10,10 +11,9 @@ const addCarTimeSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 3,
-    min: [2, 'Minimum 2 cars are required.'],
-    max: [6, 'Maximum 6 cars are allowed.'],
+    min: [0, 'Minimum 0 cars are required.'],
+    max: [carTimes.length, 'Maximum 6 cars are allowed.'],
   },
-
   bookingDate: {
     type: String,
     required: true,

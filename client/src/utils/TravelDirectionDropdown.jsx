@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 const TravelDirectionDropdown = ({ setChosenDirection }) => {
-  const directions = ['Yangon → Pyay', 'Pyay → Yangon'];
+  const directions = ['Pyay → Yangon', 'Yangon → Pyay'];
 
   const handleChooseDirection = (event) => {
     setChosenDirection(event.target.value);

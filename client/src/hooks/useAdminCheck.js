@@ -43,6 +43,7 @@ const useAdminCheck = () => {
 
   useEffect(() => {
     const checkAdminStatus = async () => {
+      console.log('calling checkAdminStatus');
       try {
         const response = await checkAdmin();
         const isAdmin = Boolean(response.isAdmin);
@@ -51,6 +52,7 @@ const useAdminCheck = () => {
         sessionStorage.setItem('isAdmin', JSON.stringify(isAdmin));
       } catch (error) {
         setIsAdmin(false);
+        sessionStorage.setItem('isAdmin', JSON.stringify(false));
       } finally {
         setLoading(false);
       }

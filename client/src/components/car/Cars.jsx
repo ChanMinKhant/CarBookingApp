@@ -6,6 +6,7 @@ import Loading from '../../utils/Loading';
 import TravelDirectionDropdown from '../../utils/TravelDirectionDropdown';
 import CarInterface from './CarInterface';
 import { getCount } from '../../service/bookingService';
+import { Link } from 'react-router-dom';
 
 // i need to use memo not to execute the function again and again
 // when i change only date or time or direction only want to render the necessary part
@@ -35,7 +36,6 @@ const Cars = () => {
     };
     if (choseDate && chosenDirection) getCounts();
   }, [choseDate, chosenDirection]);
-  console.log(count);
   // if (loading) return <Loading />;
   return (
     <div className='flex flex-col justify-center items-center w-full h-auto'>
@@ -54,9 +54,20 @@ const Cars = () => {
       </div>
       {loading ? <Loading /> : <CarInterface data={data} isAdmin={isAdmin} />}
       {isAdmin && (
-        <Link to='https://mgmg.com' className='text-blue-500 underline'>
-          Visit mgmg.com
-        </Link>
+        <div className='flex flex-col'>
+          <Link
+            to='dashboard'
+            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 inline-flex items-center justify-center'
+          >
+            to dashboard
+          </Link>
+          <Link
+            to='dashboard/control-car-time'
+            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center justify-center'
+          >
+            to add or remove car time
+          </Link>
+        </div>
       )}
     </div>
   );

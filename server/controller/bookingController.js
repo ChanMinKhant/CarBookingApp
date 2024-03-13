@@ -3,9 +3,9 @@ const Booking = require('./../model/bookingModel');
 const bcrypt = require('bcryptjs');
 const CustomError = require('./../util/CustomError');
 const { sendEmail, EmailTemplate } = require('./../util/index');
-const ApiFeatures = require('./../util/ApiFeatures');
 const ActivityLog = require('./../model/activityLogModel');
 const AddCarTime = require('./../model/addCarTimeModel');
+const { carTimes, travelDirections } = require('../util/enum');
 
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00?from=yangon" or "from=pyay"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
@@ -15,6 +15,9 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
 
   if (!date || !time || !from) {
     return next(new CustomError('Please provide date, time, and from', 400));
+  }
+  if (!carTimes.includes(time)) {
+    return next(new CustomError('Please provide a valid time', 400));
   }
 
   let query = { bookingDate: date, carTime: time };
@@ -85,8 +88,7 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide your travel direction', 400));
   }
   //check valid fields
-  const availableDirections = ['Yangon → Pyay', 'Pyay → Yangon'];
-  if (!availableDirections.includes(travelDirection)) {
+  if (!travelDirections.includes(travelDirection)) {
     return next(
       new CustomError('Please provide a valid travel direction', 400)
     );
@@ -114,8 +116,19 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide your time', 400));
   }
   //if time is not in 6:00, 6:05, 6:10, 6:15, u cant book it
-  const availableTimes = ['6:00', '6:05', '6:10', '6:15'];
-  if (!availableTimes.includes(carTime)) {
+  // const availableTimes = [
+  //   '6:00',
+  //   '6:05',
+  //   '6:10',
+  //   '6:15',
+  //   '6:20',
+  //   '6:25',
+  //   '6:30',
+  //   '6:35',
+  //   '6:40',
+  //   '6:45',
+  // ];
+  if (!carTimes.includes(carTime)) {
     return next(new CustomError('Please provide a valid time', 400));
   }
   if (!seatNumber) {
@@ -162,7 +175,8 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    booking,
+    // booking,
+    seatNumber: booking.seatNumber,
   });
 });
 
@@ -172,6 +186,9 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
     return next(
       new CustomError('Please provide date, time, from and seatNumber', 400)
     );
+  }
+  if (!carTimes.includes(time)) {
+    return next(new CustomError('Please provide a valid time', 400));
   }
   let query = {
     bookingDate: date,
@@ -201,11 +218,17 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
 exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   //search booking by id and update isApproved field to true and return updated booking
-  const updatedBooking = await Booking.findByIdAndUpdate(
-    id,
+  // const updatedBooking = await Booking.findByIdAndUpdate(
+  //   id,
+  //   { isApproved: true },
+  //   { new: true }
+  // );
+  const updatedBooking = await Booking.findOneAndUpdate(
+    { _id: id, isArchived: false, isApproved: false },
     { isApproved: true },
     { new: true }
   );
+
   await ActivityLog.create({
     booking_id: id,
     status: 'approved',
@@ -213,9 +236,11 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
   if (!updatedBooking) {
     throw new CustomError('Booking not found', 404);
   }
-  return res
-    .status(200)
-    .json({ success: true, message: 'Booking approved', updatedBooking });
+  return res.status(200).json({
+    success: true,
+    message: 'Booking approved',
+    seatNumber: updatedBooking.seatNumber,
+  });
 });
 
 exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
@@ -232,7 +257,11 @@ exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
     status: 'cancelled',
   });
 
-  return res.status(200).json({ success: true, message: 'Booking cancelled' });
+  return res.status(200).json({
+    success: true,
+    message: 'Booking cancelled',
+    seatNumber: book.seatNumber,
+  });
 });
 
 exports.deleteBooking = asyncErrorHandler(async (req, res, next) => {
@@ -246,9 +275,12 @@ exports.deleteBooking = asyncErrorHandler(async (req, res, next) => {
     booking_id: id,
     status: 'deleted',
   });
-  return res
-    .status(200)
-    .json({ success: true, message: 'Booking deleted', deletedBooking });
+  return res.status(200).json({
+    success: true,
+    message: 'Booking deleted',
+    deletedBooking,
+    seatNumber: deletedBooking.seatNumber,
+  });
 });
 
 exports.getPendingsBooking = asyncErrorHandler(async (req, res, next) => {
@@ -328,6 +360,12 @@ exports.addCarTime = asyncErrorHandler(async (req, res, next) => {
       )
     );
   }
+  if (!travelDirections.includes(travelDirection)) {
+    return next(
+      new CustomError('Please provide a valid travel direction', 400)
+    );
+  }
+
   const document = await AddCarTime.findOne({ bookingDate, travelDirection });
   if (document) {
     document.count += 1;
@@ -359,6 +397,11 @@ exports.removeCarTime = asyncErrorHandler(async (req, res, next) => {
       )
     );
   }
+  if (!travelDirections.includes(travelDirection)) {
+    return next(
+      new CustomError('Please provide a valid travel direction', 400)
+    );
+  }
   // Find or create the document
   const document = await AddCarTime.findOne({ bookingDate, travelDirection });
   if (!document) {
@@ -378,13 +421,18 @@ exports.removeCarTime = asyncErrorHandler(async (req, res, next) => {
 
 exports.getCount = asyncErrorHandler(async (req, res, next) => {
   const { bookingDate, travelDirection } = req.body;
-
   console.log(bookingDate, travelDirection);
   if (!bookingDate || !travelDirection) {
     return next(
       new CustomError('Please provide bookingDate and travelDirection', 400)
     );
   }
+  if (!travelDirections.includes(travelDirection)) {
+    return next(
+      new CustomError('Please provide a valid travel direction', 400)
+    );
+  }
+
   const document = await AddCarTime.findOne({ bookingDate, travelDirection });
   if (!document) {
     return res.status(200).json({

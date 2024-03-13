@@ -1,6 +1,14 @@
-module.test = {
-  test: 'test',
-  test2: 'test2',
-};
+exports.carTimes = [
+  '6:00',
+  '6:05',
+  '6:10',
+  '6:15',
+  '6:20',
+  '6:25',
+  '6:30',
+  '6:35',
+  '6:40',
+  '6:45',
+];
 
-//dd/mm/yyyy
+exports.travelDirections = ['Yangon → Pyay', 'Pyay → Yangon'];

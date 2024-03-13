@@ -8,10 +8,16 @@ router.route('/search').get(verifyJWT, bookingController.getSearchBookings);
 router
   .route('/get-booking-data-for-form')
   .get(verifyJWT, bookingController.getBookingDataForForm);
-router.route('/pendingseats').get(bookingController.getPendingsBooking);
-router.route('/activities').get(bookingController.getActivities);
-router.route('/approvedseats').get(bookingController.getApprovedBooking);
-router.route('/deletedseats').get(bookingController.getDeletedBooking);
+router
+  .route('/pendingseats')
+  .get(verifyJWT, bookingController.getPendingsBooking);
+router.route('/activities').get(verifyJWT, bookingController.getActivities);
+router
+  .route('/approvedseats')
+  .get(verifyJWT, bookingController.getApprovedBooking);
+router
+  .route('/deletedseats')
+  .get(verifyJWT, bookingController.getDeletedBooking);
 router.route('/approve/:id').put(verifyJWT, bookingController.approveBooking);
 router.route('/cancel/:id').put(verifyJWT, bookingController.cancelBooking);
 router.route('/delete/:id').put(verifyJWT, bookingController.deleteBooking);

@@ -45,11 +45,6 @@ const AppRouter = () => {
       path: '/admin/delete/:id/:token',
       component: <DeleteByEmail />,
     },
-    {
-      id: 7,
-      path: '/admin/control-car-time',
-      component: <ControlCarTime />,
-    },
   ];
 
   const routeGenerator = ({ id, path, component }) => {
@@ -71,6 +66,8 @@ const AppRouter = () => {
           <Route path='order' element={<Order />} />
           <Route path='approved' element={<Approved />} />
           <Route path='search' element={<Search />} />
+          <Route path='control-car-time' element={<ControlCarTime />} />
+          <Route path='*' element={<Activity />} />
         </Route>
       </Routes>
     </BrowserRouter>

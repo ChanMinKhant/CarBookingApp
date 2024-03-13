@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const { carTimes } = require('../util/enum');
 
 const bookingSchema = new mongoose.Schema(
   {
@@ -31,7 +32,7 @@ const bookingSchema = new mongoose.Schema(
     },
     carTime: {
       type: String,
-      enum: ['6:00', '6:05', '6:10', '6:15'],
+      enum: carTimes,
       required: true,
     },
     bookingDate: {
